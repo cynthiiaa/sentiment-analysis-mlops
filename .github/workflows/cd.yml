@@ -1,0 +1,48 @@
+name: CD Pipeline
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to HuggingFace Hub
+        run: |
+          pip install huggingface-hub
+          huggingface-cli login --token ${{ secrets.HF_TOKEN }}
+
+      - name: Build and push Docke image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_REGISTRY }}/sentiment-mlops:${{ github.ref_name }}
+            ${{ secrets.DOCKER_REGISTRY }}/sentiment-mlops:latest
+
+      - name: Deploy to Hugging Face Spaces
+        run: |
+          python scripts/deploy.py \
+            --space-name sentiment-mlops \
+            --token ${{ secrets.HF_TOKEN }}
+
+      - name: Run smoke tests
+        run: |
+          python tests/integration/test_deployment.py. \
+            --url https://huggingface.co/spaces/${{ github.repository_owner }}/sentiment-mlops
+
+      - name: Update model Registry
+        run: |
+          python scripts/update_registry.py \
+          --version ${{ github.ref_name }} \
+          --stage production

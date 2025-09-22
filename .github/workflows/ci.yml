@@ -1,0 +1,66 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements/*.txt') }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements/dev.txt
+
+      - name: Run linting
+        run: |
+          flake8 src/ --max-line-length=100
+          black --check src/
+          isort --check-only src/
+
+      - name: Run type checking
+        run: mypy src/ --ignore-missing-imports
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --cov=src --cov-report=xml
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: true
+
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@3
+
+      - name: Run secruity scan
+        uses: pyupio/safety@v1
+        with:
+          api-key: ${{ secrets.SAFETY_API_KEY }}
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
