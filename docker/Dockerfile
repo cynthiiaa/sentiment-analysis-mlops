@@ -14,7 +14,6 @@ RUN pip install --no-cache-dir -r base.txt
 
 COPY src/ ./src/
 COPY app/ ./app/
-COPY configs/ ./configs/
 
 EXPOSE 7860
 

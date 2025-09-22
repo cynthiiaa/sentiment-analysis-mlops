@@ -73,34 +73,14 @@ The Gradio interface will be available at `http://localhost:7860`.
 ## 🔄 MLOps Pipeline Architecture
 
 ```mermaid
-graph TB
-    A[Data Ingestion] --> B[Model Training]
-    B --> C[Model Validation]
-    C --> D[Model Registry]
-    D --> E[Model Deployment]
-    E --> F[Production Inference]
-    F --> G[Monitoring & Metrics]
-    G --> H[Drift Detection]
-    H --> I{Drift Detected?}
-    I -->|Yes| J[Alert & Retrain]
-    I -->|No| F
-    J --> B
-
-    subgraph "CI/CD Pipeline"
-        K[Code Commit] --> L[Unit Tests]
-        L --> M[Integration Tests]
-        M --> N[Model Tests]
-        N --> O[Build Docker]
-        O --> P[Deploy to Staging]
-        P --> Q[Production Deploy]
-    end
-
-    subgraph "Monitoring Stack"
-        R[Prometheus Metrics]
-        S[Performance Tracking]
-        T[Model Health Checks]
-        U[Resource Monitoring]
-    end
+graph LR
+    A[Data] --> B[Training]
+    B --> C[Model Registry]
+    C --> D[Validation]
+    D --> E[Deployment]
+    E --> F[Monitoring]
+    F --> G[Drift Detection]
+    G --> B
 ```
 
 ## 🧪 Running Tests
@@ -150,9 +130,6 @@ make docker-build
 ```bash
 # Single container
 docker run -p 7860:7860 sentiment-mlops:latest
-
-# With Docker Compose (recommended)
-make docker-run
 ```
 
 ### Docker Compose Services
