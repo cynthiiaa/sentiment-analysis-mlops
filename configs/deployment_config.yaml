@@ -1,0 +1,27 @@
+deployment:
+  model_registry: "mlflow"
+  serving_framework: "fastapi"
+  monitoring:
+    enabled: true
+    metrics_port: 9090
+
+infrastructure:
+  container:
+    base_image: "python:3.10-slim"
+    registry: "ghcr.io"
+  resources:
+    cpu: "2"
+    memory: "4Gi"
+
+huggingface:
+  space_sdk: "gradio"
+  hardware: "cpu-basic"
+
+versioning:
+  strategy: "semantic"
+  auto_promote: false
+
+rollback:
+  enabled: true
+  health_check_interval: 60
+  failure_threshold: 3

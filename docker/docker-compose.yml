@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "7860:7860"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5003
+    volumes:
+      - model_cache:/app/models
+      - ../configs:/app/configs:ro 
+    depends_on:
+      - mlflow
+      # - prometheus
+    networks:
+      - mlops-network
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:latest
+    ports:
+      - "5003:5003"
+    command: mlflow server --host 0.0.0.0
+    volumes:
+      - mlflow_data:/mlflow
+    networks:
+      - mlops-network
+
+volumes:
+  model_cache:
+  mlflow_data:
+
+networks:
+  mlops-network:
+    driver: bridge

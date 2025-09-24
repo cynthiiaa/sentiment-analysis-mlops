@@ -186,7 +186,10 @@ with gr.Blocks(title="MLOps Sentiment Analysis", theme=gr.themes.Soft()) as demo
         gr.Markdown(
             f"""
             ### Model Information
-            {json.dumps(model.get_model_info(), indent=2)}
+            {
+                json.dumps(model.get_model_info(), indent=2)
+                }
+            
 
             ### MLOps Features
             - **Model Registry:** MLflow for versioning and deployment

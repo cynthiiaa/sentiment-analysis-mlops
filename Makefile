@@ -42,7 +42,8 @@ docker-build:
 	docker build -f docker/Dockerfile -t sentiment-mlops:latest .
 
 docker-run:
-	docker-compose -f docker/docker-compose.yml up
+	docker run -p 7860:7860 sentiment-mlops:latest
+# 	this will be available on http://0.0.0.0:7860
 
 train:
 	python scripts/train.py --config configs/training_config.yaml
