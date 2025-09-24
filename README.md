@@ -155,19 +155,40 @@ make lint && make format && make test
 make docker-build
 ```
 
-### Run with Docker
+### Run with Docker Compose (Recommended)
 
 ```bash
-# Single container
-docker run -p 7860:7860 sentiment-mlops:latest
+# Start all services (Gradio + FastAPI + MLflow)
+docker-compose -f docker/docker-compose.yml up
+
+# Or run in background
+docker-compose -f docker/docker-compose.yml up -d
+
+# Stop all services
+docker-compose -f docker/docker-compose.yml down
+```
+
+This will start:
+- **Gradio Web UI**: http://localhost:7860
+- **FastAPI Server**: http://localhost:8000  
+- **MLflow Tracking**: http://localhost:5003
+
+### Single Container (Gradio only)
+
+```bash
+# Build and run just the Gradio interface
+make docker-build
+make docker-run
 ```
 
 ### Docker Compose Services
 
 The Docker Compose setup includes:
 
-- **App**: Gradio web interface
-- **Prometheus**: Metrics collection
+- **App**: Gradio web interface (port 7860)
+- **API**: FastAPI REST endpoints (port 8000) 
+- **MLflow**: Experiment tracking server (port 5003)
+- **Prometheus**: Metrics collection (optional)
 - **Grafana**: Monitoring dashboards (optional)
 
 ## 📚 API Documentation

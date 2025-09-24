@@ -19,11 +19,29 @@ services:
     networks:
       - mlops-network
 
+  api:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MLFLOW_TRACKING_URI=http://mlflow:5003
+    command: python src/api/inference.py
+    volumes:
+      - model_cache:/app/models
+      - ../configs:/app/configs:ro
+    depends_on:
+      - mlflow
+    networks:
+      - mlops-network
+
   mlflow:
     image: ghcr.io/mlflow/mlflow:latest
     ports:
       - "5003:5003"
-    command: mlflow server --host 0.0.0.0
+    command: mlflow server --host 0.0.0.0 --port 5003
     volumes:
       - mlflow_data:/mlflow
     networks:
