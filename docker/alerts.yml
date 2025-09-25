@@ -1,0 +1,39 @@
+groups:
+  - name: sentiment_analysis_alerts
+    interval: 30s
+    rules:
+      - alert: HighLatency
+        expr: historgram_quantile(0.95, prediction_duration_seconds_bucket) > 0.5
+        for: 5m
+        labels:
+          serverity: warning
+        annotations:
+          summary: "High prediction latency detected"
+          description: "P95 latency is {{ $value }}s (threshold: 0.5s)"
+
+      - alert: LowConfidence
+        expr: avg(model_confidence) < 0.7
+        for: 10m
+        labels:
+          serverity: warning
+        annotations:
+          summary: "Low model confidence"
+          description: "Average confidence is {{ $value }} (threshold: 0.7)"
+
+      - alert: DriftDetected
+        expr: model_drift_detected == 1
+        for: 1m
+        labels:
+          serverity: critical
+        annotations:
+          summary: "Data drift detected"
+          description: "Distribution shift detected in input data"
+
+      - alert: HighErrorRate
+        expr: rate(prediction_errors_total[5m]) > 0.05
+        for: 5m
+        labels:
+          serverity: critical
+        annotations:
+          summary: "High error rate"
+          description: "Error rate is {{ $value }} (threshold: 5%)"
