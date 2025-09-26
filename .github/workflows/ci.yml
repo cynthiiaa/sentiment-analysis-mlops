@@ -54,10 +54,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run secruity scan
-        uses: pyupio/safety@v1
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          api-key: ${{ secrets.SAFETY_API_KEY }}
+          python-version: "3.10"
+
+      - name: Install safety
+        run: pip install safety
+
+      - name: Run security scan
+        run: safety check --json
 
       - name: Run Trivy scan
         uses: aquasecurity/trivy-action@master
