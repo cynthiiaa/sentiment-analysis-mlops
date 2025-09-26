@@ -29,10 +29,13 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements/dev.txt
 
+      - name: Check black version
+        run: black --version
+
       - name: Run linting
         run: |
           flake8 src/ --max-line-length=100
-          black --check src/
+          black --check src/ --line-length=100
           isort --check-only src/
 
       - name: Run type checking

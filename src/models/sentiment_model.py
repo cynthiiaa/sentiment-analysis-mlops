@@ -45,7 +45,10 @@ class SentimentModel:
 
         for text in texts:
             inputs = self.tokenizer(
-                text, return_tensors="pt", truncation=True, max_length=self.config.max_length
+                text,
+                return_tensors="pt",
+                truncation=True,
+                max_length=self.config.max_length,
             ).to(self.config.device)
 
             with torch.no_grad():
