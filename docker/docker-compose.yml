@@ -12,7 +12,7 @@ services:
       - MLFLOW_TRACKING_URI=http://mlflow:5003
     volumes:
       - model_cache:/app/models
-      - ../configs:/app/configs:ro 
+      - ../configs:/app/configs:ro
     depends_on:
       - mlflow
       - prometheus
@@ -46,7 +46,7 @@ services:
       - mlflow_data:/mlflow
     networks:
       - mlops-network
-  
+
   prometheus:
     image: prom/prometheus:latest
     ports:

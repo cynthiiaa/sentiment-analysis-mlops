@@ -1,12 +1,14 @@
-import pytest
-from fastapi_testclient import TestClient
-import sys
 import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
+
+from fastapi_testclient import TestClient
 
 from src.api.inference import app
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 client = TestClient(app)
+
 
 class TestAPI:
     def test_health_check(self):
@@ -15,10 +17,7 @@ class TestAPI:
         assert response.json()["status"] == "healthy"
 
     def test_predict_endpoint(self):
-        payload = {
-            "texts": ["Great product!", "Terrible service"],
-            "return_probabilities": True
-        }
+        payload = {"texts": ["Great product!", "Terrible service"], "return_probabilities": True}
         response = client.post("/predict", json=payload)
 
         assert response.status_code == 200

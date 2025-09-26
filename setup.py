@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -22,7 +22,7 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.10"
+        "Programming Language :: Python :: 3.10",
     ],
     python_requires=">=3.10",
     install_requires=requirements,
@@ -32,14 +32,14 @@ setup(
             "pytest-cov>=4.1.0",
             "black>=23.11.0",
             "flake8>6.1.0",
-            "mypy>=1.7.1"
+            "mypy>=1.7.1",
         ],
     },
     entry_points={
         "console_scripts": [
             "sentiment-train=scripts.train:main",
             "sentiment-serve=app.gradio_app:main",
-            "sentiment-deploy=scripts.deploy:main"
+            "sentiment-deploy=scripts.deploy:main",
         ],
-    }
+    },
 )

@@ -75,6 +75,7 @@ make clean             # Clean up cache files and build artifacts
 # 🐳 Docker Operations
 make docker-build      # Build Docker image
 make docker-run        # Run application in Docker container
+make docker-teardown   # Teardown Docker containers
 
 # 💡 Get Help
 make help              # Show all available commands

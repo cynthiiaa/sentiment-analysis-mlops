@@ -1,25 +1,28 @@
 import argparse
-import yaml
 from pathlib import Path
-import torch
+
+import mlflow
+import numpy as np
+import yaml
+from datasets import load_dataset
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
-    TrainingArguments,
+    DataCollatorWithPadding,
     Trainer,
-    DataCollatorWithPadding
+    TrainingArguments,
 )
-from datasets import load_dataset
-import mlflow
+
 from src.models.model_registry import ModelRegistry
-import numpy as np
-from sklearn.metrics import accuracy_score, precision_recall_fscore_support
+
 
 def load_config(config_path: str):
     """Load training configuration"""
-    with open(config_path, 'r') as file:
+    with open(config_path, "r") as file:
         return yaml.safe_load(file)
-    
+
+
 def compute_metrics(eval_pred):
     """Compute metrics for evaluation"""
     predictions, labels = eval_pred
@@ -30,12 +33,8 @@ def compute_metrics(eval_pred):
     )
     accuracy = accuracy_score(labels, predictions)
 
-    return {
-        "accuracy": accuracy,
-        "f1": f1,
-        "precision": precision,
-        "recall": recall
-    }
+    return {"accuracy": accuracy, "f1": f1, "precision": precision, "recall": recall}
+
 
 def train_model(config: dict):
     """Main training function"""
@@ -51,15 +50,14 @@ def train_model(config: dict):
             examples["sentence"],
             padding=True,
             truncation=True,
-            max_length=config["model"]["max_length"]
+            max_length=config["model"]["max_length"],
         )
-    
+
     tokenized_datasets = dataset.map(tokenize_function, batched=True)
 
     # initialize model
     model = AutoModelForSequenceClassification.from_pretrained(
-        config["model"]["base_model"],
-        num_labels=2
+        config["model"]["base_model"], num_labels=2
     )
 
     # setup training arguments
@@ -75,7 +73,7 @@ def train_model(config: dict):
         evaluation_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,
-        metric_for_best_model="f1"
+        metric_for_best_model="f1",
     )
 
     # initialize trainer
@@ -86,7 +84,7 @@ def train_model(config: dict):
         eval_dataset=tokenized_datasets["validation"],
         tokenizer=tokenizer,
         data_collator=DataCollatorWithPadding(tokenizer=tokenizer),
-        compute_metrics=compute_metrics
+        compute_metrics=compute_metrics,
     )
 
     # start MLflow run
@@ -110,15 +108,12 @@ def train_model(config: dict):
         trainer.save_model(model_path)
 
         # register model
-        run_id = mlflow.active_run().info.run_id
-        registry.register_model(
-            model,
-            metrics=eval_results,
-            tags={"training_config": str(config)}
-        )
+        # run_id = mlflow.active_run().info.run_id
+        registry.register_model(model, metrics=eval_results, tags={"training_config": str(config)})
 
     print(f"Training completed. Model saved to {model_path}")
     return eval_results
+
 
 def main():
     parser = argparse.ArgumentParser(description="Train sentiment analysis model")
@@ -126,13 +121,14 @@ def main():
         "--config",
         type=str,
         default="configs/training_config.yaml",
-        help="Path to training configuration file"
+        help="Path to training configuration file",
     )
     args = parser.parse_args()
 
     config = load_config(args.config)
     results = train_model(config)
     print(f"Final metrics: {results}")
+
 
 if __name__ == "__main__":
     main()

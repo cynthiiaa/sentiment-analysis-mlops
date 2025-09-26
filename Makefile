@@ -47,7 +47,7 @@ docker-run:
 
 docker-teardown:
 	docker-compose -f docker/docker-compose.yml down
-	
+
 train:
 	python scripts/train.py --config configs/training_config.yaml
 
