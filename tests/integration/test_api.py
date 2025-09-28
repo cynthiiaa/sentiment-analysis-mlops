@@ -1,7 +1,7 @@
 import os
 import sys
 
-from fastapi_testclient import TestClient
+from fastapi.testclient import TestClient
 
 from src.api.inference import app
 

@@ -2,3 +2,4 @@ mlops/
 .devcontainer/
 **__pycache__**
 **__init__**
+mlflow.db
