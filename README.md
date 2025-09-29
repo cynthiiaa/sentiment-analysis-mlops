@@ -81,12 +81,96 @@ make train
 ```
 sentiment-analysis-mlops/
 ├── app/gradio_app.py          # Web interface
-├── src/api/inference.py       # REST API
-├── configs/training_config.yaml # Training setup
-├── scripts/train.py           # Training script
-├── docker/docker-compose.yml  # Multi-service deployment
-└── requirements/              # Dependencies
+├── src/
+│   ├── api/inference.py       # REST API
+│   ├── models/                # ML models & registry
+│   └── monitoring/            # Drift detection & metrics
+├── scripts/
+│   ├── train.py              # Training script
+│   ├── evaluate.py           # Model evaluation (NEW)
+│   ├── deploy.py             # Deployment automation (NEW)
+│   └── generate_report.py    # Report generation (NEW)
+├── configs/
+│   ├── training_config.yaml  # Training setup
+│   └── deployment_config.yaml # Deploy settings (NEW)
+├── tests/
+│   ├── unit/                 # Unit tests
+│   ├── integration/          # API tests (NEW)
+│   └── performance/          # Latency tests (NEW)
+├── docker/
+│   ├── docker-compose.yml    # Multi-service deployment
+│   ├── Dockerfile            # Container definition
+│   ├── prometheus.yml        # Metrics config (NEW)
+│   └── alerts.yml           # Alert rules (NEW)
+├── .github/workflows/        # CI/CD pipelines (NEW)
+├── notebooks/                # Exploration notebooks
+├── data/                     # Sample datasets (NEW)
+└── requirements/             # Dependencies
 ```
+
+## 🎓 Learning Path for MLOps Engineers
+
+### For Beginners - Start Here!
+
+If you're new to MLOps, follow this learning path to understand the project:
+
+#### 📚 Week 1: Understanding the Basics
+1. **Start with the notebook** (`notebooks/01_exploration.ipynb`)
+   - Understand the data and model
+   - See how sentiment analysis works
+
+2. **Run the Gradio app** (`app/gradio_app.py`)
+   - See the end-user experience
+   - Test different inputs
+
+3. **Explore the model code** (`src/models/sentiment_model.py`)
+   - Understand model loading and inference
+   - Learn about tokenization and predictions
+
+#### 🚀 Week 2: Training & Experimentation
+4. **Study the training config** (`configs/training_config.yaml`)
+   - Learn about hyperparameters
+   - Understand dataset configuration
+
+5. **Run training** (`scripts/train.py`)
+   - Train your first model
+   - Monitor with MLflow (http://localhost:5003)
+
+6. **Evaluate models** (`scripts/evaluate.py`)
+   - Compare model performance
+   - Understand metrics
+
+#### 🔧 Week 3: APIs & Testing
+7. **Build the API** (`src/api/inference.py`)
+   - Learn FastAPI basics
+   - Implement endpoints
+
+8. **Write tests** (`tests/`)
+   - Unit tests (`tests/unit/test_model.py`)
+   - Integration tests (`tests/integration/test_api.py`)
+   - Performance tests (`tests/performance/test_latency.py`)
+
+#### 📊 Week 4: Monitoring & Production
+9. **Add monitoring** (`src/monitoring/`)
+   - Drift detection (`drift_detection.py`)
+   - Metrics collection (`metrics.py`)
+
+10. **Deploy with Docker** (`docker/`)
+    - Understand containerization
+    - Multi-service orchestration
+
+11. **Set up CI/CD** (`.github/workflows/`)
+    - Automated testing
+    - Model validation
+    - Deployment pipelines
+
+### 🚀 For Experienced Engineers - Quick Setup
+
+1. **Fork & customize configs** → `configs/`
+2. **Train your model** → `make train`
+3. **Deploy services** → `docker-compose up`
+4. **Monitor** → Check Prometheus/Grafana dashboards
+5. **Iterate** → Use MLflow for experiment tracking
 
 ## 📖 Full Documentation
 

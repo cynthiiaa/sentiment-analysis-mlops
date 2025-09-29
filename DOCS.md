@@ -11,7 +11,9 @@ This document provides comprehensive documentation for the Sentiment Analysis ML
 - [Docker & Deployment](#-docker--deployment)
 - [Monitoring & Metrics](#-monitoring--metrics)
 - [Testing](#-testing)
+- [CI/CD Pipelines](#-cicd-pipelines)
 - [Project Architecture](#-project-architecture)
+- [File Reference](#-file-reference)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 
@@ -484,37 +486,138 @@ If using the full Docker Compose setup with Grafana:
 
 ## 🧪 Testing
 
-### Unit Tests
+### Test Structure
+
+The project includes three types of tests:
+
+1. **Unit Tests** (`tests/unit/`)
+   - Model inference testing
+   - Individual component validation
+   - Mocked dependencies
+
+2. **Integration Tests** (`tests/integration/`)
+   - API endpoint testing
+   - Full request/response cycles
+   - Database interactions
+
+3. **Performance Tests** (`tests/performance/`)
+   - Latency benchmarks
+   - Throughput testing
+   - Resource utilization
+
+### Running Tests
 
 ```bash
+# Run all tests with coverage
 make test
-```
 
-### Specific Test Categories
-
-```bash
 # Unit tests only
 pytest tests/unit/ -v
 
-# Integration tests only
+# Integration tests (API tests)
 pytest tests/integration/ -v
 
-# With coverage report
+# Performance benchmarks
+pytest tests/performance/ -v --benchmark
+
+# With detailed coverage report
 pytest tests/ -v --cov=src --cov-report=html
+pytest tests/ -v --cov=src --cov-report=term-missing
+```
+
+### Writing New Tests
+
+#### Unit Test Example
+```python
+# tests/unit/test_model.py
+def test_sentiment_prediction():
+    model = SentimentModel()
+    result = model.predict(["I love this!"])
+    assert result[0]["sentiment"] == "positive"
+    assert result[0]["confidence"] > 0.8
+```
+
+#### Integration Test Example
+```python
+# tests/integration/test_api.py
+def test_predict_endpoint():
+    client = TestClient(app)
+    response = client.post(
+        "/predict",
+        json={"texts": ["Great product!"]}
+    )
+    assert response.status_code == 200
+    assert "predictions" in response.json()
+```
+
+#### Performance Test Example
+```python
+# tests/performance/test_latency.py
+@pytest.mark.benchmark
+def test_inference_latency(benchmark):
+    model = SentimentModel()
+    text = "Test sentiment" * 50  # Long text
+    result = benchmark(model.predict, [text])
+    assert result is not None
 ```
 
 ### Code Quality
 
 ```bash
-# Run linting
+# Run linting (flake8 + mypy)
 make lint
 
-# Format code
+# Auto-format code (black + isort)
 make format
 
-# Full quality check
+# Security scan
+make security-scan
+
+# Full quality check before commit
 make lint && make format && make test
 ```
+
+## 🆕 CI/CD Pipelines
+
+The project includes GitHub Actions workflows for continuous integration and deployment:
+
+### Workflow Files
+
+1. **Model Validation** (`.github/workflows/model_validation.yml`)
+   - Runs daily or on-demand
+   - Downloads test data
+   - Evaluates model performance
+   - Checks for model drift
+   - Generates validation reports
+   - Sends alerts on failure
+
+2. **CI Pipeline** (`.github/workflows/ci.yml`)
+   - Triggered on push/PR
+   - Runs tests
+   - Checks code quality
+   - Builds Docker images
+   - Validates configurations
+
+3. **CD Pipeline** (`.github/workflows/cd.yml`)
+   - Deploys to staging/production
+   - Runs smoke tests
+   - Monitors deployment health
+   - Supports rollback
+
+### Setting Up CI/CD
+
+1. **Configure Secrets**
+   ```
+   SLACK_WEBHOOK: For notifications
+   DOCKER_REGISTRY: Container registry
+   AWS_ACCESS_KEY_ID: For cloud deployment
+   AWS_SECRET_ACCESS_KEY: For cloud deployment
+   ```
+
+2. **Customize Workflows**
+   - Adjust cron schedules
+   - Modify deployment targets
+   - Add custom validation steps
 
 ## 🏗️ Project Architecture
 
@@ -535,20 +638,71 @@ sentiment-analysis-mlops/
 │   ├── training_config.yaml   # Training configuration
 │   └── deployment_config.yaml # Deployment settings
 ├── scripts/
-│   └── train.py              # Model training script
+│   ├── train.py              # Model training script
+│   ├── evaluate.py           # Model evaluation script
+│   ├── deploy.py             # Deployment automation
+│   └── generate_report.py    # Report generation
 ├── docker/
 │   ├── Dockerfile            # Container definition
-│   └── docker-compose.yml    # Multi-service setup
+│   ├── docker-compose.yml    # Multi-service setup
+│   ├── prometheus.yml        # Metrics configuration
+│   └── alerts.yml           # Alert rules
 ├── tests/
 │   ├── unit/                 # Unit tests
-│   └── integration/          # Integration tests
+│   │   └── test_model.py     # Model testing
+│   ├── integration/          # Integration tests
+│   │   └── test_api.py       # API testing
+│   └── performance/          # Performance tests
+│       └── test_latency.py   # Latency benchmarks
+├── .github/
+│   └── workflows/            # CI/CD pipelines
+│       └── model_validation.yml # Automated validation
+├── notebooks/
+│   └── 01_exploration.ipynb  # Data exploration
+├── data/
+│   └── sample_data.csv       # Example dataset
+├── results/                  # Analysis outputs
+│   ├── error_analysis.csv
+│   └── performance_analysis.csv
 ├── requirements/
 │   ├── base.txt             # Production dependencies
 │   └── dev.txt              # Development dependencies
+├── setup.py                 # Package setup
 ├── Makefile                 # Build and deployment commands
 ├── README.md                # Main overview and quick start
 └── DOCS.md                  # This comprehensive documentation
 ```
+
+## 📚 File Reference
+
+### New Files Added
+
+#### Scripts (`scripts/`)
+- **`evaluate.py`**: Evaluates trained models against test datasets, generates performance metrics
+- **`deploy.py`**: Automates deployment to staging/production environments
+- **`generate_report.py`**: Creates HTML/PDF reports from evaluation results
+
+#### Configuration (`configs/`)
+- **`deployment_config.yaml`**: Defines deployment targets, resource limits, scaling policies
+
+#### Docker (`docker/`)
+- **`prometheus.yml`**: Configures Prometheus scraping targets and intervals
+- **`alerts.yml`**: Defines alert rules for system health and model performance
+
+#### Tests
+- **`tests/integration/test_api.py`**: Tests all API endpoints with various payloads
+- **`tests/performance/test_latency.py`**: Benchmarks inference latency under load
+
+#### CI/CD (`.github/workflows/`)
+- **`model_validation.yml`**: Automated daily validation of model performance
+
+#### Data & Results
+- **`data/sample_data.csv`**: Example dataset for testing
+- **`results/error_analysis.csv`**: Model error analysis output
+- **`results/performance_analysis.csv`**: Performance metrics over time
+
+#### Other
+- **`setup.py`**: Package installation configuration
 
 ## 🔄 MLOps Pipeline Architecture
 

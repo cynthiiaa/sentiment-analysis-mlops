@@ -1,0 +1,11 @@
+text,expected_sentiment
+"This product exceeded all my expectations!",positive
+"Terrible customer service and poor quality.",negative
+"It's okay but nothing special really.",negative
+"Absolutely love it! Best purchase ever!",positive
+"Complete waste of money. Very disappointed.",negative
+"The quality is decent for the price.",positive
+"Would definitely recommend to others!",positive
+"Not worth the hype at all.",negative
+"Fantastic experience from start to finish!",positive
+"Mediocre at best unfortunately.",negative
