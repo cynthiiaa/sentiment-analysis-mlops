@@ -35,7 +35,7 @@ class TestSentimentModel:
                 < 0.01
             )
 
-    @pytest.mark.parameterize(
+    @pytest.mark.parametrize(
         "text,expected_sentiment",
         [("This is absolutely fantastic!", "positive"), ("Worst experience ever", "negative")],
     )
