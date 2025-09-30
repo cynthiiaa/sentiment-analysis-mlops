@@ -115,18 +115,19 @@ def save_evaluation_results(
     """Save evaluation results to file"""
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
+    # Convert numpy types to Python native types for JSON serialization
     results = {
-        "metrics": metrics,
-        "total_samples": len(predictions),
-        "correct_predictions": sum(p == l for p, l in zip(predictions, labels)),
+        "metrics": {k: float(v) for k, v in metrics.items()},
+        "total_samples": int(len(predictions)),
+        "correct_predictions": int(sum(p == l for p, l in zip(predictions, labels))),
         "class_distribution": {
             "predicted": {
-                "positive": sum(1 for p in predictions if p == 1),
-                "negative": sum(1 for p in predictions if p == 0),
+                "positive": int(sum(1 for p in predictions if p == 1)),
+                "negative": int(sum(1 for p in predictions if p == 0)),
             },
             "actual": {
-                "positive": sum(1 for label in labels if label == 1),
-                "negative": sum(1 for label in labels if label == 0),
+                "positive": int(sum(1 for label in labels if label == 1)),
+                "negative": int(sum(1 for label in labels if label == 0)),
             },
         },
     }
