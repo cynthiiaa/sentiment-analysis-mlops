@@ -50,7 +50,9 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           file: ./coverage.xml
-          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false  # Don't fail if token is not set
+        continue-on-error: true  # Allow workflow to continue even if codecov fails
 
   security:
     runs-on: ubuntu-latest

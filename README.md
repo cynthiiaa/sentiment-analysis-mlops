@@ -178,6 +178,17 @@ For detailed documentation including API reference, configuration options, monit
 
 **👉 [See DOCS.md](./DOCS.md)**
 
+## 🔧 Optional Setup
+
+### Code Coverage (Codecov)
+To enable code coverage reports in CI/CD:
+1. Sign up at [codecov.io](https://codecov.io)
+2. Add your repository
+3. Copy the token
+4. Add it as `CODECOV_TOKEN` in GitHub Settings → Secrets
+
+*Note: Coverage reporting will work without this, but you'll see rate limit warnings.*
+
 ## 🆘 Need Help?
 
 **Common Issues:**
