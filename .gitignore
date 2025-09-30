@@ -3,3 +3,5 @@ mlops/
 **__pycache__**
 **__init__**
 mlflow.db
+mlruns/
+models/
