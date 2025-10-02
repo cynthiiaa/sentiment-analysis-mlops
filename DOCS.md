@@ -584,12 +584,15 @@ The project includes GitHub Actions workflows for continuous integration and dep
 ### Workflow Files
 
 1. **Model Validation** (`.github/workflows/model_validation.yml`)
-   - Runs daily or on-demand
-   - Downloads test data
-   - Evaluates model performance
-   - Checks for model drift
-   - Generates validation reports
-   - Sends alerts on failure
+   - **Schedule**: Daily at midnight UTC or manual trigger
+   - **Features**:
+     - Downloads GLUE SST-2 test dataset automatically
+     - Evaluates model performance against F1 threshold (0.90)
+     - Performs drift detection with 0.05 alert threshold
+     - Runs performance benchmarks with pytest-benchmark
+     - Generates HTML validation reports
+     - Uploads reports as artifacts
+   - **Dependencies**: Requires pytest-benchmark installation
 
 2. **CI Pipeline** (`.github/workflows/ci.yml`)
    - Triggered on push/PR
@@ -606,13 +609,18 @@ The project includes GitHub Actions workflows for continuous integration and dep
 
 ### Setting Up CI/CD
 
-1. **Configure Secrets**
+1. **Configure Secrets (Optional)**
+
+   The workflows will run without any secrets, but you can add these for enhanced functionality:
+
    ```
-   SLACK_WEBHOOK: For notifications
-   DOCKER_REGISTRY: Container registry
-   AWS_ACCESS_KEY_ID: For cloud deployment
-   AWS_SECRET_ACCESS_KEY: For cloud deployment
+   CODECOV_TOKEN: For code coverage reporting (optional - works without it)
+   DOCKER_REGISTRY: Container registry for deployment
+   AWS_ACCESS_KEY_ID: For cloud deployment (if using AWS)
+   AWS_SECRET_ACCESS_KEY: For cloud deployment (if using AWS)
    ```
+
+   Note: GitHub automatically sends email notifications for workflow failures if enabled in your account settings.
 
 2. **Customize Workflows**
    - Adjust cron schedules
@@ -798,7 +806,23 @@ The system supports blue-green deployments for zero-downtime updates:
    python -c "import mlflow; mlflow.end_run()"
    ```
 
-6. **Docker Compose Issues**
+6. **CI/CD Pipeline Issues**
+
+   **pytest benchmark not found**:
+   - The model validation workflow requires pytest-benchmark
+   - It's automatically installed in the workflow
+   - For local testing: `pip install pytest-benchmark`
+
+   **Workflow failures without notifications**:
+   - GitHub sends email notifications by default
+   - Check your GitHub notification settings
+   - No additional configuration needed
+
+   **Performance benchmark failures**:
+   - Ensure `tests/performance/` directory exists
+   - Run with: `pytest tests/performance/ -v --benchmark-only`
+
+7. **Docker Compose Issues**
 
    ```bash
    # Reset Docker Compose

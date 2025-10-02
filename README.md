@@ -76,6 +76,16 @@ make train
 # Monitor progress at http://localhost:5003 (MLflow UI)
 ```
 
+## 🤖 Automated Model Validation
+
+The project includes daily automated model validation that:
+- Checks model performance against thresholds (F1 > 0.90)
+- Detects data drift using statistical tests
+- Runs performance benchmarks
+- Generates HTML validation reports
+
+This runs automatically every day at midnight or can be triggered manually in GitHub Actions.
+
 ## 🏗️ Project Structure
 
 ```
@@ -87,24 +97,27 @@ sentiment-analysis-mlops/
 │   └── monitoring/            # Drift detection & metrics
 ├── scripts/
 │   ├── train.py              # Training script
-│   ├── evaluate.py           # Model evaluation (NEW)
-│   ├── deploy.py             # Deployment automation (NEW)
-│   └── generate_report.py    # Report generation (NEW)
+│   ├── evaluate.py           # Model evaluation
+│   ├── deploy.py             # Deployment automation
+│   └── generate_report.py    # Report generation
 ├── configs/
 │   ├── training_config.yaml  # Training setup
-│   └── deployment_config.yaml # Deploy settings (NEW)
+│   └── deployment_config.yaml # Deploy settings
 ├── tests/
 │   ├── unit/                 # Unit tests
-│   ├── integration/          # API tests (NEW)
-│   └── performance/          # Latency tests (NEW)
+│   ├── integration/          # API tests
+│   └── performance/          # Latency tests
 ├── docker/
 │   ├── docker-compose.yml    # Multi-service deployment
 │   ├── Dockerfile            # Container definition
-│   ├── prometheus.yml        # Metrics config (NEW)
-│   └── alerts.yml           # Alert rules (NEW)
-├── .github/workflows/        # CI/CD pipelines (NEW)
+│   ├── prometheus.yml        # Metrics config
+│   └── alerts.yml           # Alert rules
+├── .github/workflows/        # CI/CD pipelines
+│   ├── model_validation.yml # Daily automated validation
+│   ├── ci.yml               # Continuous integration
+│   └── cd.yml               # Continuous deployment
 ├── notebooks/                # Exploration notebooks
-├── data/                     # Sample datasets (NEW)
+├── data/                     # Sample datasets
 └── requirements/             # Dependencies
 ```
 
@@ -115,11 +128,14 @@ sentiment-analysis-mlops/
 If you're new to MLOps, follow this learning path to understand the project:
 
 #### 📚 Week 1: Understanding the Basics
+
 1. **Start with the notebook** (`notebooks/01_exploration.ipynb`)
+
    - Understand the data and model
    - See how sentiment analysis works
 
 2. **Run the Gradio app** (`app/gradio_app.py`)
+
    - See the end-user experience
    - Test different inputs
 
@@ -128,11 +144,14 @@ If you're new to MLOps, follow this learning path to understand the project:
    - Learn about tokenization and predictions
 
 #### 🚀 Week 2: Training & Experimentation
+
 4. **Study the training config** (`configs/training_config.yaml`)
+
    - Learn about hyperparameters
    - Understand dataset configuration
 
 5. **Run training** (`scripts/train.py`)
+
    - Train your first model
    - Monitor with MLflow (http://localhost:5003)
 
@@ -141,7 +160,9 @@ If you're new to MLOps, follow this learning path to understand the project:
    - Understand metrics
 
 #### 🔧 Week 3: APIs & Testing
+
 7. **Build the API** (`src/api/inference.py`)
+
    - Learn FastAPI basics
    - Implement endpoints
 
@@ -151,11 +172,14 @@ If you're new to MLOps, follow this learning path to understand the project:
    - Performance tests (`tests/performance/test_latency.py`)
 
 #### 📊 Week 4: Monitoring & Production
+
 9. **Add monitoring** (`src/monitoring/`)
+
    - Drift detection (`drift_detection.py`)
    - Metrics collection (`metrics.py`)
 
 10. **Deploy with Docker** (`docker/`)
+
     - Understand containerization
     - Multi-service orchestration
 
@@ -181,13 +205,15 @@ For detailed documentation including API reference, configuration options, monit
 ## 🔧 Optional Setup
 
 ### Code Coverage (Codecov)
+
 To enable code coverage reports in CI/CD:
+
 1. Sign up at [codecov.io](https://codecov.io)
 2. Add your repository
 3. Copy the token
 4. Add it as `CODECOV_TOKEN` in GitHub Settings → Secrets
 
-*Note: Coverage reporting will work without this, but you'll see rate limit warnings.*
+_Note: Coverage reporting will work without this, but you'll see rate limit warnings._
 
 ## 🆘 Need Help?
 

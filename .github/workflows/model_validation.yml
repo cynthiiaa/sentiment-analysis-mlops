@@ -20,6 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements/dev.txt
+          pip install pytest-benchmark
 
       - name: Download test data
         run: |
@@ -39,7 +40,7 @@ jobs:
 
       - name: Performance benchmarks
         run: |
-          pytest tests/performance/ -v --benchmark
+          pytest tests/performance/ -v --benchmark-only
 
       - name: Generate report
         run: |
@@ -51,11 +52,3 @@ jobs:
         with:
           name: validation-report
           path: reports/*.html
-
-      - name: Alert on failure
-        if: failure()
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: "Model validation failed! Check the report."
-          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
